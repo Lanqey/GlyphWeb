@@ -1,0 +1,1726 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>谱符Glyph — 临床级智能遗传系谱分析平台</title>
+
+    <!--全局配置-->
+    <script>
+        window.APP_CONFIG = {
+            iconPath: '/favicon.png', // 软件图标路径
+            apkPath: '/Glyph.apk', // 安装包下载路径
+            version: '2.3.0' // 当前版本号
+        };
+    </script>
+
+    <style>
+        *,
+        *::before,
+        *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg: #ffffff;
+            --surface: #f8f9fb;
+            --surface-2: #f3f4f6;
+            --text: #0f0f11;
+            --text-2: #5a5a66;
+            --text-3: #9ca3af;
+            --accent: #2563eb;
+            --accent-soft: #eff6ff;
+            --accent-glow: rgba(37, 99, 235, 0.08);
+            --border: #e8e8ec;
+            --border-2: #f0f0f3;
+            --shadow: 0 4px 24px rgba(0, 0, 0, 0.04);
+            --shadow-lg: 0 24px 64px rgba(0, 0, 0, 0.08);
+            --radius: 20px;
+            --radius-sm: 14px;
+            --ease: cubic-bezier(0.16, 1, 0.3, 1);
+            --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        /* ===== NAV ===== */
+        .nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(20px) saturate(1.5);
+            -webkit-backdrop-filter: blur(20px) saturate(1.5);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.04);
+            padding: 0 24px;
+            height: 64px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            transition: box-shadow 0.3s ease;
+        }
+
+        .nav-scrolled {
+            box-shadow: 0 1px 12px rgba(0, 0, 0, 0.04);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 18px;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+        }
+
+        .logo-mark {
+            width: 30px;
+            height: 30px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            flex-shrink: 0;
+            background: transparent;
+        }
+
+        .logo-mark img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            display: block;
+        }
+
+        .nav-links {
+            display: none;
+            gap: 32px;
+            align-items: center;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--text-2);
+            font-size: 14px;
+            font-weight: 500;
+            transition: color 0.3s ease;
+            position: relative;
+            padding: 4px 0;
+        }
+
+        .nav-links a:hover {
+            color: var(--text);
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            width: 0;
+            height: 1.5px;
+            background: var(--text);
+            transition: all 0.3s var(--ease);
+            transform: translateX(-50%);
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        .nav-cta {
+            background: var(--text);
+            color: white !important;
+            padding: 8px 18px !important;
+            border-radius: 100px;
+            font-size: 13px !important;
+            font-weight: 600 !important;
+            transition: all 0.3s var(--ease) !important;
+        }
+
+        .nav-cta::after {
+            display: none !important;
+        }
+
+        .nav-cta:hover {
+            background: #1a1a1a !important;
+            transform: translateY(-1px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        @media (min-width: 768px) {
+            .nav {
+                padding: 0 48px;
+                height: 68px;
+            }
+
+            .nav-links {
+                display: flex;
+            }
+
+            .logo {
+                font-size: 20px;
+            }
+
+            .logo-mark {
+                width: 32px;
+                height: 32px;
+            }
+        }
+
+        /* ===== HERO ===== */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 100px 24px 80px;
+            position: relative;
+            overflow: hidden;
+            background: linear-gradient(180deg, var(--bg) 0%, var(--surface) 50%, var(--bg) 100%);
+        }
+
+        .hero-ambient {
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            overflow: hidden;
+        }
+
+        .ambient-orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(60px);
+            opacity: 0.25;
+            animation: orbFloat 8s ease-in-out infinite;
+        }
+
+        .orb-1 {
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, #dbeafe, transparent 70%);
+            top: -5%;
+            right: -10%;
+            animation-delay: 0s;
+        }
+
+        .orb-2 {
+            width: 350px;
+            height: 350px;
+            background: radial-gradient(circle, #e0e7ff, transparent 70%);
+            bottom: 0;
+            left: -10%;
+            animation-delay: 3s;
+        }
+
+        .orb-3 {
+            width: 250px;
+            height: 250px;
+            background: radial-gradient(circle, #f1f5f9, transparent 70%);
+            top: 40%;
+            left: 25%;
+            animation-delay: 5s;
+            opacity: 0.2;
+        }
+
+        @keyframes orbFloat {
+
+            0%,
+            100% {
+                transform: translate(0, 0) scale(1);
+            }
+
+            50% {
+                transform: translate(15px, -20px) scale(1.05);
+            }
+        }
+
+        .hero-grid {
+            position: absolute;
+            inset: 0;
+            background-image:
+                linear-gradient(rgba(0, 0, 0, 0.02) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 0, 0, 0.02) 1px, transparent 1px);
+            background-size: 60px 60px;
+            mask-image: radial-gradient(ellipse 60% 50% at 50% 45%, black 20%, transparent 70%);
+        }
+
+        .hero-inner {
+            max-width: 1200px;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 60px;
+            position: relative;
+            z-index: 2;
+            text-align: center;
+        }
+
+        @media (min-width: 900px) {
+            .hero-inner {
+                flex-direction: row;
+                text-align: left;
+                gap: 80px;
+                align-items: center;
+            }
+        }
+
+        .hero-text {
+            flex: 1;
+        }
+
+        .hero-visual {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            width: 100%;
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--accent-soft);
+            color: var(--accent);
+            padding: 7px 16px;
+            border-radius: 100px;
+            font-size: 12px;
+            font-weight: 600;
+            border: 1px solid rgba(37, 99, 235, 0.08);
+            margin-bottom: 24px;
+            animation: slideUp 0.8s var(--ease) both;
+        }
+
+        .badge-dot {
+            width: 6px;
+            height: 6px;
+            background: var(--accent);
+            border-radius: 50%;
+            position: relative;
+        }
+
+        .badge-dot::after {
+            content: '';
+            position: absolute;
+            inset: -3px;
+            border-radius: 50%;
+            border: 1.5px solid var(--accent);
+            animation: dotPulse 2s ease-out infinite;
+        }
+
+        @keyframes dotPulse {
+            0% {
+                transform: scale(0.6);
+                opacity: 1;
+            }
+
+            100% {
+                transform: scale(2.2);
+                opacity: 0;
+            }
+        }
+
+        .hero h1 {
+            font-size: 36px;
+            font-weight: 700;
+            line-height: 1.1;
+            letter-spacing: -1.5px;
+            margin-bottom: 20px;
+            animation: slideUp 1s var(--ease) 0.1s both;
+        }
+
+        @media (min-width: 768px) {
+            .hero h1 {
+                font-size: 52px;
+            }
+        }
+
+        @media (min-width: 1100px) {
+            .hero h1 {
+                font-size: 64px;
+            }
+        }
+
+        .hero h1 .accent {
+            background: linear-gradient(135deg, var(--accent), #60a5fa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero-desc {
+            font-size: 16px;
+            color: var(--text-2);
+            line-height: 1.7;
+            margin-bottom: 32px;
+            max-width: 480px;
+            animation: slideUp 1s var(--ease) 0.2s both;
+        }
+
+        @media (min-width: 768px) {
+            .hero-desc {
+                font-size: 18px;
+                margin-bottom: 40px;
+            }
+        }
+
+        .hero-actions {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            animation: slideUp 1s var(--ease) 0.3s both;
+        }
+
+        @media (min-width: 900px) {
+            .hero-actions {
+                justify-content: flex-start;
+            }
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 24px;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 600;
+            text-decoration: none;
+            border: none;
+            cursor: pointer;
+            transition: all 0.35s var(--ease);
+            position: relative;
+            overflow: hidden;
+            white-space: nowrap;
+        }
+
+        @media (min-width: 768px) {
+            .btn {
+                padding: 14px 28px;
+                font-size: 15px;
+                border-radius: 14px;
+            }
+        }
+
+        .btn-primary {
+            background: var(--text);
+            color: white;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn-primary::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.12), transparent);
+            transition: left 0.6s var(--ease);
+        }
+
+        .btn-primary:hover::before {
+            left: 100%;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 28px rgba(0, 0, 0, 0.18);
+        }
+
+        .btn-primary:active {
+            transform: translateY(0) scale(0.98);
+        }
+
+        .btn-secondary {
+            background: white;
+            color: var(--text);
+            border: 1.5px solid var(--border);
+            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.02);
+        }
+
+        .btn-secondary:hover {
+            border-color: var(--text);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow);
+        }
+
+        /* ===== HERO VISUAL — Abstract Engine Core ===== */
+        .engine-core {
+            position: relative;
+            width: 280px;
+            height: 280px;
+            animation: fadeInUp 1.2s var(--ease) 0.4s both;
+        }
+
+        @media (min-width: 768px) {
+            .engine-core {
+                width: 380px;
+                height: 380px;
+            }
+        }
+
+        .core-ring {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            border-radius: 50%;
+            border: 1.5px solid var(--border);
+            transition: all 0.5s var(--ease);
+        }
+
+        .core-ring.r1 {
+            width: 60px;
+            height: 60px;
+            border-color: var(--text);
+            animation: ringPulse 3s ease-in-out infinite;
+        }
+
+        .core-ring.r2 {
+            width: 120px;
+            height: 120px;
+            animation: ringSpin 20s linear infinite;
+        }
+
+        .core-ring.r3 {
+            width: 180px;
+            height: 180px;
+            animation: ringSpin 30s linear infinite reverse;
+        }
+
+        .core-ring.r4 {
+            width: 240px;
+            height: 240px;
+            animation: ringSpin 40s linear infinite;
+        }
+
+        @media (min-width: 768px) {
+            .core-ring.r1 {
+                width: 80px;
+                height: 80px;
+            }
+
+            .core-ring.r2 {
+                width: 160px;
+                height: 160px;
+            }
+
+            .core-ring.r3 {
+                width: 240px;
+                height: 240px;
+            }
+
+            .core-ring.r4 {
+                width: 320px;
+                height: 320px;
+            }
+        }
+
+        @keyframes ringPulse {
+
+            0%,
+            100% {
+                transform: translate(-50%, -50%) scale(1);
+                opacity: 1;
+            }
+
+            50% {
+                transform: translate(-50%, -50%) scale(1.08);
+                opacity: 0.8;
+            }
+        }
+
+        @keyframes ringSpin {
+            from {
+                transform: translate(-50%, -50%) rotate(0deg);
+            }
+
+            to {
+                transform: translate(-50%, -50%) rotate(360deg);
+            }
+        }
+
+        .core-dot {
+            position: absolute;
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--text);
+            animation: dotOrbit linear infinite;
+        }
+
+        .core-dot.d1 {
+            top: 50%;
+            left: 50%;
+            animation-duration: 4s;
+            animation-delay: 0s;
+        }
+
+        .core-dot.d2 {
+            top: 50%;
+            left: 50%;
+            animation-duration: 6s;
+            animation-delay: -2s;
+        }
+
+        .core-dot.d3 {
+            top: 50%;
+            left: 50%;
+            animation-duration: 8s;
+            animation-delay: -4s;
+        }
+
+        .core-dot.d4 {
+            top: 50%;
+            left: 50%;
+            animation-duration: 5s;
+            animation-delay: -1s;
+        }
+
+        .core-dot.d5 {
+            top: 50%;
+            left: 50%;
+            animation-duration: 7s;
+            animation-delay: -3s;
+        }
+
+        @keyframes dotOrbit {
+            from {
+                transform: translate(-50%, -50%) rotate(0deg) translateX(60px) rotate(0deg);
+            }
+
+            to {
+                transform: translate(-50%, -50%) rotate(360deg) translateX(60px) rotate(-360deg);
+            }
+        }
+
+        @media (min-width: 768px) {
+            @keyframes dotOrbit {
+                from {
+                    transform: translate(-50%, -50%) rotate(0deg) translateX(80px) rotate(0deg);
+                }
+
+                to {
+                    transform: translate(-50%, -50%) rotate(360deg) translateX(80px) rotate(-360deg);
+                }
+            }
+        }
+
+        .core-center {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 20px;
+            height: 20px;
+            background: var(--text);
+            border-radius: 50%;
+            box-shadow: 0 0 30px rgba(0, 0, 0, 0.15);
+            animation: centerGlow 3s ease-in-out infinite;
+        }
+
+        @keyframes centerGlow {
+
+            0%,
+            100% {
+                box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+            }
+
+            50% {
+                box-shadow: 0 0 40px rgba(37, 99, 235, 0.15);
+            }
+        }
+
+        .core-label {
+            position: absolute;
+            bottom: -40px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--text-3);
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            white-space: nowrap;
+        }
+
+        /* ===== SECTIONS COMMON ===== */
+        section {
+            padding: 80px 24px;
+        }
+
+        @media (min-width: 768px) {
+            section {
+                padding: 120px 48px;
+            }
+        }
+
+        .section-head {
+            text-align: center;
+            max-width: 600px;
+            margin: 0 auto 56px;
+        }
+
+        @media (min-width: 768px) {
+            .section-head {
+                margin-bottom: 72px;
+            }
+        }
+
+        .tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: var(--surface-2);
+            color: var(--text-2);
+            padding: 6px 14px;
+            border-radius: 100px;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            margin-bottom: 16px;
+            border: 1px solid var(--border-2);
+        }
+
+        .s-title {
+            font-size: 28px;
+            font-weight: 700;
+            letter-spacing: -0.8px;
+            margin-bottom: 12px;
+            line-height: 1.2;
+        }
+
+        @media (min-width: 768px) {
+            .s-title {
+                font-size: 40px;
+                letter-spacing: -1.2px;
+            }
+        }
+
+        .s-desc {
+            font-size: 15px;
+            color: var(--text-2);
+            line-height: 1.7;
+        }
+
+        @media (min-width: 768px) {
+            .s-desc {
+                font-size: 17px;
+            }
+        }
+
+        /* ===== ENGINE ===== */
+        .engine-section {
+            background: var(--bg);
+        }
+
+        .engine-grid {
+            max-width: 1100px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 16px;
+        }
+
+        @media (min-width: 640px) {
+            .engine-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 20px;
+            }
+        }
+
+        @media (min-width: 1024px) {
+            .engine-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        .e-card {
+            background: white;
+            border: 1px solid var(--border-2);
+            border-radius: var(--radius-sm);
+            padding: 28px;
+            transition: all 0.5s var(--ease);
+            position: relative;
+            overflow: hidden;
+            cursor: default;
+        }
+
+        .e-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2.5px;
+            background: var(--text);
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.5s var(--ease);
+        }
+
+        .e-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-lg);
+            border-color: transparent;
+        }
+
+        .e-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .e-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            background: var(--surface);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 18px;
+            transition: all 0.4s var(--ease-spring);
+        }
+
+        .e-card:hover .e-icon {
+            background: var(--accent-soft);
+            transform: scale(1.08);
+        }
+
+        .e-icon svg {
+            width: 20px;
+            height: 20px;
+            stroke: var(--text-2);
+            stroke-width: 1.8;
+            fill: none;
+            transition: stroke 0.3s ease;
+        }
+
+        .e-card:hover .e-icon svg {
+            stroke: var(--accent);
+        }
+
+        .e-card h3 {
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+
+        .e-card p {
+            font-size: 13px;
+            color: var(--text-2);
+            line-height: 1.6;
+        }
+
+        .e-tag {
+            display: inline-block;
+            margin-top: 14px;
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--text-3);
+            background: var(--surface);
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-family: ui-monospace, SFMono-Regular, monospace;
+        }
+
+        /* ===== FEATURES ===== */
+        .feature-section {
+            background: var(--surface);
+            position: relative;
+        }
+
+        .feature-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--border), transparent);
+        }
+
+        .feature-wrap {
+            max-width: 900px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            gap: 48px;
+        }
+
+        @media (min-width: 768px) {
+            .feature-wrap {
+                gap: 64px;
+            }
+        }
+
+        .f-text h2 {
+            font-size: 26px;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+            margin-bottom: 28px;
+            line-height: 1.2;
+            text-align: center;
+        }
+
+        @media (min-width: 768px) {
+            .f-text h2 {
+                font-size: 36px;
+                letter-spacing: -1px;
+            }
+        }
+
+        .f-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 16px;
+        }
+
+        @media (min-width: 640px) {
+            .f-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 20px;
+            }
+        }
+
+        .f-item {
+            display: flex;
+            gap: 16px;
+            align-items: flex-start;
+            padding: 22px 24px;
+            border-radius: var(--radius-sm);
+            transition: all 0.4s var(--ease);
+            cursor: default;
+            border: 1px solid transparent;
+            background: white;
+        }
+
+        .f-item:hover {
+            border-color: var(--border-2);
+            box-shadow: var(--shadow);
+            transform: translateY(-3px);
+        }
+
+        .f-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            background: var(--surface);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            transition: all 0.3s var(--ease-spring);
+        }
+
+        .f-item:hover .f-icon {
+            background: var(--accent-soft);
+            transform: scale(1.1);
+        }
+
+        .f-icon svg {
+            width: 18px;
+            height: 18px;
+            stroke: var(--text-2);
+            stroke-width: 1.8;
+            fill: none;
+            transition: stroke 0.3s ease;
+        }
+
+        .f-item:hover .f-icon svg {
+            stroke: var(--accent);
+        }
+
+        .f-item h4 {
+            font-size: 15px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .f-item p {
+            font-size: 13px;
+            color: var(--text-2);
+            line-height: 1.6;
+        }
+
+        /* ===== FLOW ===== */
+        .flow-section {
+            background: var(--bg);
+        }
+
+        .flow-wrap {
+            max-width: 700px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            gap: 0;
+        }
+
+        .flow-item {
+            display: flex;
+            gap: 16px;
+            position: relative;
+        }
+
+        .flow-item:not(:last-child) {
+            padding-bottom: 16px;
+        }
+
+        .flow-item:not(:last-child)::after {
+            content: '';
+            position: absolute;
+            left: 19px;
+            top: 48px;
+            width: 2px;
+            height: calc(100% - 32px);
+            background: linear-gradient(180deg, var(--border), var(--text-3));
+            opacity: 0.35;
+            animation: flowPulse 3s ease-in-out infinite;
+        }
+
+        @keyframes flowPulse {
+
+            0%,
+            100% {
+                opacity: 0.25;
+            }
+
+            50% {
+                opacity: 0.6;
+            }
+        }
+
+        .flow-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            background: white;
+            border: 1.5px solid var(--border-2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            z-index: 2;
+            margin-top: 2px;
+            transition: all 0.4s var(--ease-spring);
+        }
+
+        .flow-icon svg {
+            width: 18px;
+            height: 18px;
+            stroke: var(--text-2);
+            stroke-width: 1.8;
+            fill: none;
+            transition: stroke 0.3s ease;
+        }
+
+        .flow-item:hover .flow-icon {
+            border-color: var(--accent);
+            transform: scale(1.1);
+            box-shadow: 0 0 0 5px var(--accent-glow);
+        }
+
+        .flow-item:hover .flow-icon svg {
+            stroke: var(--accent);
+        }
+
+        .flow-body {
+            flex: 1;
+            background: white;
+            border: 1px solid var(--border-2);
+            border-radius: var(--radius-sm);
+            padding: 18px 22px;
+            transition: all 0.4s var(--ease);
+            margin-bottom: 8px;
+        }
+
+        .flow-item:hover .flow-body {
+            border-color: var(--accent);
+            box-shadow: var(--shadow);
+            transform: translateX(3px);
+        }
+
+        .flow-body h4 {
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 3px;
+        }
+
+        .flow-body p {
+            font-size: 13px;
+            color: var(--text-2);
+            line-height: 1.55;
+        }
+
+        /* ===== DOWNLOAD ===== */
+        .dl-section {
+            padding: 100px 24px 80px;
+            background: linear-gradient(180deg, var(--surface) 0%, var(--bg) 100%);
+            text-align: center;
+            position: relative;
+        }
+
+        .dl-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--border), transparent);
+        }
+
+        @media (min-width: 768px) {
+            .dl-section {
+                padding: 140px 48px 100px;
+            }
+        }
+
+        .dl-card {
+            max-width: 480px;
+            margin: 0 auto;
+            background: white;
+            border: 1px solid var(--border-2);
+            border-radius: var(--radius);
+            padding: 44px 32px;
+            box-shadow: var(--shadow-lg);
+            position: relative;
+            z-index: 2;
+            transition: all 0.5s var(--ease);
+        }
+
+        @media (min-width: 768px) {
+            .dl-card {
+                padding: 56px 44px;
+            }
+        }
+
+        .dl-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 30px 80px rgba(0, 0, 0, 0.1);
+        }
+
+        .dl-icon {
+            width: 64px;
+            height: 64px;
+            border-radius: 18px;
+            margin: 0 auto 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            background: transparent;
+            box-shadow: 0 8px 28px rgba(0, 0, 0, 0.06);
+            animation: iconBounce 4s ease-in-out infinite;
+        }
+
+        .dl-icon img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            display: block;
+        }
+
+        @keyframes iconBounce {
+
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-8px);
+            }
+        }
+
+        .dl-card h2 {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        @media (min-width: 768px) {
+            .dl-card h2 {
+                font-size: 30px;
+            }
+        }
+
+        .dl-card>p {
+            color: var(--text-2);
+            margin-bottom: 16px;
+            font-size: 14px;
+        }
+
+        @media (min-width: 768px) {
+            .dl-card>p {
+                font-size: 15px;
+            }
+        }
+
+        .dl-version {
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text-3);
+            margin-bottom: 24px;
+            letter-spacing: 0.3px;
+            font-family: ui-monospace, SFMono-Regular, monospace;
+        }
+
+        .dl-version span {
+            color: var(--text-2);
+            font-weight: 600;
+        }
+
+        .dl-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            background: var(--text);
+            color: white;
+            padding: 14px 36px;
+            border-radius: 14px;
+            font-size: 15px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.4s var(--ease);
+            position: relative;
+            overflow: hidden;
+            border: none;
+            cursor: pointer;
+        }
+
+        .dl-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            transition: left 0.7s var(--ease);
+        }
+
+        .dl-btn:hover::before {
+            left: 100%;
+        }
+
+        .dl-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.2);
+        }
+
+        .dl-btn:active {
+            transform: translateY(0) scale(0.98);
+        }
+
+        /* ===== FOOTER ===== */
+        .footer {
+            padding: 32px 24px;
+            text-align: center;
+            border-top: 1px solid var(--border-2);
+            color: var(--text-3);
+            font-size: 12px;
+            background: var(--bg);
+        }
+
+        @media (min-width: 768px) {
+            .footer {
+                padding: 40px 48px;
+                font-size: 13px;
+            }
+        }
+
+        .footer-brand {
+            font-weight: 600;
+            color: var(--text-2);
+            margin-bottom: 4px;
+            font-size: 13px;
+        }
+
+        @media (min-width: 768px) {
+            .footer-brand {
+                font-size: 14px;
+            }
+        }
+
+        /* ===== ANIMATIONS ===== */
+        .reveal {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s var(--ease);
+        }
+
+        .reveal.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .reveal-left {
+            opacity: 0;
+            transform: translateX(-30px);
+            transition: all 0.8s var(--ease);
+        }
+
+        .reveal-left.visible {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        .reveal-right {
+            opacity: 0;
+            transform: translateX(30px);
+            transition: all 0.8s var(--ease);
+        }
+
+        .reveal-right.visible {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        .stagger-1 {
+            transition-delay: 0.08s;
+        }
+
+        .stagger-2 {
+            transition-delay: 0.16s;
+        }
+
+        .stagger-3 {
+            transition-delay: 0.24s;
+        }
+
+        .stagger-4 {
+            transition-delay: 0.32s;
+        }
+
+        .stagger-5 {
+            transition-delay: 0.40s;
+        }
+
+        .stagger-6 {
+            transition-delay: 0.48s;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(25px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(40px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <nav class="nav" id="nav">
+        <div class="logo">
+            <div class="logo-mark">
+                <img id="navIcon" src="/Glyph.png" alt="谱符Glyph 图标">
+            </div>
+            <span>谱符Glyph</span>
+        </div>
+        <div class="nav-links">
+            <a href="#engine">引擎核心</a>
+            <a href="#features">交互体验</a>
+            <a href="#flow">分析流程</a>
+            <a href="#download" class="nav-cta">下载 软件</a>
+        </div>
+    </nav>
+
+    <!-- Hero -->
+    <section class="hero">
+        <div class="hero-ambient">
+            <div class="ambient-orb orb-1"></div>
+            <div class="ambient-orb orb-2"></div>
+            <div class="ambient-orb orb-3"></div>
+        </div>
+        <div class="hero-grid"></div>
+
+        <div class="hero-inner">
+            <div class="hero-text">
+                <div class="badge">
+                    <span class="badge-dot"></span>
+                    自研超级孟德尔计算引擎
+                </div>
+                <h1>临床级系谱分析<br>推演<span class="accent">遗传命脉</span></h1>
+                <p class="hero-desc">
+                    谱符Glyph 是面向医学遗传学领域的专业级系谱分析平台 搭载自研超级孟德尔计算引擎，实现基因型全自动推断、发病风险精准量化与婚配策略智能生成，为临床决策提供高置信度数据支撑。
+                </p>
+                <div class="hero-actions">
+                    <a id="heroDownloadBtn" href="/Glyph.apk" class="btn btn-primary" download>
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                            <polyline points="7 10 12 15 17 10" />
+                            <line x1="12" y1="15" x2="12" y2="3" />
+                        </svg>
+                        下载软件
+                    </a>
+                    <a href="#engine" class="btn btn-secondary">技术架构</a>
+                </div>
+            </div>
+
+            <div class="hero-visual">
+                <div class="engine-core">
+                    <div class="core-ring r4"></div>
+                    <div class="core-ring r3"></div>
+                    <div class="core-ring r2"></div>
+                    <div class="core-ring r1"></div>
+                    <div class="core-center"></div>
+                    <div class="core-dot d1"></div>
+                    <div class="core-dot d2"></div>
+                    <div class="core-dot d3"></div>
+                    <div class="core-dot d4"></div>
+                    <div class="core-dot d5"></div>
+                    <div class="core-label">Mendel Engine Core</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Engine -->
+    <section class="engine-section" id="engine">
+        <div class="section-head reveal">
+            <div class="tag">SUPER MENDEL ENGINE</div>
+            <h2 class="s-title">全栈遗传推断引擎</h2>
+            <p class="s-desc">
+                从底层架构出发，构建覆盖六种遗传模式的计算核心。基于基因型枚举与概率图模型，实现从表型标记到风险量化的端到端闭环，为临床遗传咨询提供可复现的决策依据。
+            </p>
+        </div>
+        <div class="engine-grid">
+            <div class="e-card reveal stagger-1">
+                <div class="e-icon">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" />
+                    </svg>
+                </div>
+                <h3>引擎缓存套件</h3>
+                <p>按（遗传方式 × 致死基因）维度缓存 MendelianEngine 套件，避免重复构建解析器、格式化器与枚举器，实现毫秒级响应。</p>
+                <span class="e-tag">ConcurrentHashMap</span>
+            </div>
+            <div class="e-card reveal stagger-2">
+                <div class="e-icon">
+                    <svg viewBox="0 0 24 24">
+                        <circle cx="12" cy="12" r="10" />
+                        <path d="M12 6v6l4 2" />
+                    </svg>
+                </div>
+                <h3>六模式全覆盖</h3>
+                <p>完整支持常显、常隐、X显、X隐、Y连锁与线粒体遗传模式。精确处理半合子、复合杂合子及携带者状态的判定逻辑。</p>
+                <span class="e-tag">InheritMode</span>
+            </div>
+            <div class="e-card reveal stagger-3">
+                <div class="e-icon">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M17 1l4 4-4 4" />
+                        <path d="M3 11V9a4 4 0 0 1 4-4h14" />
+                        <path d="M7 23l-4-4 4-4" />
+                        <path d="M21 13v2a4 4 0 0 1-4 4H3" />
+                    </svg>
+                </div>
+                <h3>双向传播推断</h3>
+                <p>基于 BFS 算法实现从锚点向父母、子女及旁系亲属的双向基因型传播，结合虚拟传播机制处理概率型推断场景。</p>
+                <span class="e-tag">BFS + Virtual</span>
+            </div>
+            <div class="e-card reveal stagger-4">
+                <div class="e-icon">
+                    <svg viewBox="0 0 24 24">
+                        <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+                        <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+                    </svg>
+                </div>
+                <h3>冲突检测与锁定</h3>
+                <p>InferenceMediator 实时比对手动录入与系统推断结果，自动识别逻辑冲突并支持关键节点锁定，确保数据一致性。</p>
+                <span class="e-tag">ConflictRule</span>
+            </div>
+            <div class="e-card reveal stagger-5">
+                <div class="e-icon">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M18 20V10" />
+                        <path d="M12 20V4" />
+                        <path d="M6 20v-6" />
+                    </svg>
+                </div>
+                <h3>贝叶斯风险评估</h3>
+                <p>基于基因型后验概率分布量化后代患病风险，输出低/中/高三级风险评级及循证婚配建议报告。</p>
+                <span class="e-tag">Bayesian</span>
+            </div>
+            <div class="e-card reveal stagger-6">
+                <div class="e-icon">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M12 2L2 7l10 5 10-5-10-5z" />
+                        <path d="M2 17l10 5 10-5" />
+                        <path d="M2 12l10 5 10-5" />
+                    </svg>
+                </div>
+                <h3>表型状态引擎</h3>
+                <p>PhenotypeEngine 建立合子类型到临床表型的精确映射，覆盖患病、携带者、正常及胚胎死亡四级状态体系。</p>
+                <span class="e-tag">Zygosity → Phenotype</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features -->
+    <section class="feature-section" id="features">
+        <div class="feature-wrap">
+            <div class="f-text reveal">
+                <h2>专业级交互体验</h2>
+                <div class="f-grid">
+                    <div class="f-item">
+                        <div class="f-icon">
+                            <svg viewBox="0 0 24 24">
+                                <path d="M15 3h6v6" />
+                                <path d="M9 21H3v-6" />
+                                <path d="M21 3l-7 7" />
+                                <path d="M3 21l7-7" />
+                            </svg>
+                        </div>
+                        <div>
+                            <h4>双指缩放与焦点保持</h4>
+                            <p>GestureController 实现丝滑的缩放手势，缩放焦点始终锁定在双指中心，画布跟随手指自然流动。</p>
+                        </div>
+                    </div>
+                    <div class="f-item">
+                        <div class="f-icon">
+                            <svg viewBox="0 0 24 24">
+                                <circle cx="12" cy="12" r="10" />
+                                <path d="M12 6v6l4 2" />
+                            </svg>
+                        </div>
+                        <div>
+                            <h4>节点生命周期的动画叙事</h4>
+                            <p>新节点以 OvershootInterpolator 弹性弹入，删除时渐隐收缩，高亮选中时金色边框呼吸闪烁。</p>
+                        </div>
+                    </div>
+                    <div class="f-item">
+                        <div class="f-icon">
+                            <svg viewBox="0 0 24 24">
+                                <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
+                                <line x1="3" y1="9" x2="21" y2="9" />
+                                <line x1="9" y1="21" x2="9" y2="9" />
+                            </svg>
+                        </div>
+                        <div>
+                            <h4>智能布局自动排列</h4>
+                            <p>LayoutEngine 自动计算世代层级与节点位置，解决配偶对齐冲突，支持辅助视图嵌套渲染。</p>
+                        </div>
+                    </div>
+                    <div class="f-item">
+                        <div class="f-icon">
+                            <svg viewBox="0 0 24 24">
+                                <polyline points="1 4 1 10 7 10" />
+                                <path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10" />
+                            </svg>
+                        </div>
+                        <div>
+                            <h4>完整的撤销重做栈</h4>
+                            <p>ActionManager 记录每一次增删改操作，支持无限级撤销与重做，操作安全可回溯。</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Flow -->
+    <section class="flow-section" id="flow">
+        <div class="section-head reveal">
+            <div class="tag">WORKFLOW</div>
+            <h2 class="s-title">从绘制到报告的完整闭环</h2>
+            <p class="s-desc">数据在系统中自动流转，无需手动同步。修改系谱图即刻触发引擎重算，风险报告实时更新。</p>
+        </div>
+        <div class="flow-wrap">
+            <div class="flow-item reveal stagger-1">
+                <div class="flow-icon">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M12 20h9" />
+                        <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" />
+                    </svg>
+                </div>
+                <div class="flow-body">
+                    <h4>绘制系谱</h4>
+                    <p>拖拽创建个体，点击建立婚配关系，自动识别父母-子女连线。支持性别、姓名、出生顺序等属性编辑。</p>
+                </div>
+            </div>
+            <div class="flow-item reveal stagger-2">
+                <div class="flow-icon">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z" />
+                        <line x1="7" y1="7" x2="7.01" y2="7" />
+                    </svg>
+                </div>
+                <div class="flow-body">
+                    <h4>标记表型</h4>
+                    <p>为个体标记疾病状态或致死基因携带情况。系统立即启动 MendelBridge 进行基因型推断。</p>
+                </div>
+            </div>
+            <div class="flow-item reveal stagger-3">
+                <div class="flow-icon">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
+                        <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
+                    </svg>
+                </div>
+                <div class="flow-body">
+                    <h4>引擎自动推断</h4>
+                    <p>Propagator 在家系图中双向传播基因型信息，InferenceMediator 协调手动值与系统推断，冲突实时告警。</p>
+                </div>
+            </div>
+            <div class="flow-item reveal stagger-4">
+                <div class="flow-icon">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                        <polyline points="14 2 14 8 20 8" />
+                        <line x1="16" y1="13" x2="8" y2="13" />
+                        <line x1="16" y1="17" x2="8" y2="17" />
+                        <polyline points="10 9 9 9 8 9" />
+                    </svg>
+                </div>
+                <div class="flow-body">
+                    <h4>生成风险评估</h4>
+                    <p>GeneticCalculator 计算每个基因型的精确概率，AdviceGenerator 输出分级风险建议与婚配指导。</p>
+                </div>
+            </div>
+            <div class="flow-item reveal stagger-5">
+                <div class="flow-icon">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                        <polyline points="17 8 12 3 7 8" />
+                        <line x1="12" y1="3" x2="12" y2="15" />
+                    </svg>
+                </div>
+                <div class="flow-body">
+                    <h4>导出与分享</h4>
+                    <p>支持 PDF（A4 自适应）、高清图片、AES 加密文件导出。数据可备份，家系可跨设备迁移。</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Download -->
+    <section class="dl-section" id="download">
+        <div class="dl-card reveal">
+            <div class="dl-icon">
+                <img id="dlIcon" src="/Glyph.png" alt="谱符Glyph 图标">
+            </div>
+            <h2>开始使用 谱符Glyph</h2>
+            <p>安装包已准备就绪</p>
+            <div class="dl-version">版本 <span id="versionDisplay">1.0.0</span></div>
+            <a id="dlDownloadBtn" href="/Glyph.apk" class="dl-btn" download>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                    <polyline points="7 10 12 15 17 10" />
+                    <line x1="12" y1="15" x2="12" y2="3" />
+                </svg>
+                下载软件
+            </a>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <p class="footer-brand">谱符Glyph</p>
+        <p>Copyright © 2026 蓝七网络工作室.<br>All Rights Reserved.</p>
+    </footer>
+
+    <script>
+        // ===== 动态应用全局配置 =====
+        document.addEventListener('DOMContentLoaded', function() {
+            const cfg = window.APP_CONFIG;
+            if (!cfg) return;
+
+            // 1. 更新导航图标
+            const navIcon = document.getElementById('navIcon');
+            if (navIcon) navIcon.src = cfg.iconPath;
+
+            // 2. 更新下载卡片图标
+            const dlIcon = document.getElementById('dlIcon');
+            if (dlIcon) dlIcon.src = cfg.iconPath;
+
+            // 3. 更新版本号
+            const versionSpan = document.getElementById('versionDisplay');
+            if (versionSpan) versionSpan.textContent = cfg.version;
+
+            // 4. 更新所有带 download 属性的下载链接（Hero 和 下载卡片）
+            const downloadBtns = document.querySelectorAll('a[download]');
+            downloadBtns.forEach(btn => {
+                // 只修改指向 apk 的链接（避免误改其他下载链接）
+                if (btn.getAttribute('href') && btn.getAttribute('href').endsWith('.apk')) {
+                    btn.href = cfg.apkPath;
+                }
+            });
+
+            // 额外处理：如果 Hero 下载按钮的 href 被其他方式引用，上面已覆盖
+        });
+    </script>
+
+    <!-- 原有滚动与导航交互 -->
+    <script>
+        (function() {
+            // 滚动监听
+            window.addEventListener('scroll', function() {
+                document.getElementById('nav').classList.toggle('nav-scrolled', window.scrollY > 60);
+            });
+
+            // 平滑锚点跳转
+            document.querySelectorAll('a[href^="#"]').forEach(function(a) {
+                a.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    var target = document.querySelector(this.getAttribute('href'));
+                    if (target) target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                });
+            });
+
+            // 滚动触发动画（原有 IntersectionObserver）
+            var observer = new IntersectionObserver(function(entries) {
+                entries.forEach(function(e) {
+                    if (e.isIntersecting) e.target.classList.add('visible');
+                });
+            }, {
+                threshold: 0.06,
+                rootMargin: '0px 0px -50px 0px'
+            });
+            document.querySelectorAll('.reveal, .reveal-left, .reveal-right').forEach(function(el) {
+                observer.observe(el);
+            });
+        })();
+    </script>
+</body>
+
+</html>
