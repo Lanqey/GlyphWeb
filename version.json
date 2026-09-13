@@ -1,6 +1,6 @@
 {
   "name": "谱符Glyph",
-  "versionName": "2.3.2",
-  "versionCode": 203020,
-  "message": ""
+  "versionName": "2.3.3",
+  "versionCode": 203031,
+  "message": "本次更新极大程度上优化了绘制性能，修复了已知问题，增加了未知问题"
 }
