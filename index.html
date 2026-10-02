@@ -7,8 +7,8 @@
     <title>谱符Glyph — 家系遗传推断工具</title>
     <script>
         window.APP_CONFIG = {
-            iconPath: '/favicon.png',
-            apkPath: '/Glyph.apk',
+            iconPath: '/GlyphWeb/favicon.png',
+            apkPath: '/GlyphWeb/Glyph.apk',
             version: '2.4.3'
         };
     </script>
@@ -2040,7 +2040,7 @@
         });
 
         /* 音频：开场音乐（含 6.5s 流星 + 7s 起淡出至 8s 归零） */
-        const OPENING_SRC = '/opening.mp3';
+        const OPENING_SRC = '/GlyphWeb/opening.mp3';
         let openingAudio = null;
         let timelineStarted = false;
 
@@ -2169,7 +2169,7 @@
         });
 
         /* 打字机音效（Audio 池，避免互相打断） */
-        const WRITE_SRC = '/write.mp3';
+        const WRITE_SRC = '/GlyphWeb/write.mp3';
         const writePool = [];
         for (let i = 0; i < 8; i++) {
             const a = new Audio(WRITE_SRC);
