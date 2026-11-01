@@ -4,25 +4,25 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta name="description" content="谱符 Glyph — 基于孟德尔遗传规律的家系遗传推断工具。支持六种遗传模式、双向基因型传播、外显率配置与多基因疾病分析。">
+    <meta name="description" content="谱符 Glyph — 基于孟德尔遗传规律与PICF引擎的家系遗传分析工具。">
     <meta name="theme-color" content="#040404">
     <title>谱符 Glyph — 家系遗传推断工具</title>
 
-    <link rel="icon" type="image/png" href="/GlyphWeb/favicon.png">
-    <link rel="preload" href="/GlyphWeb/opening.mp3" as="audio" type="audio/mpeg">
-    <link rel="preload" href="/GlyphWeb/favicon.png" as="image">
+    <link rel="icon" type="image/png" href="./favicon.png">
+    <link rel="preload" href="./opening.mp3" as="audio" type="audio/mpeg">
+    <link rel="preload" href="./favicon.png" as="image">
 
-    <link rel="stylesheet" href="/GlyphWeb/css/styles.css">
+    <link rel="stylesheet" href="./css/styles.css">
 
     <script>
         window.APP_CONFIG = {
-            iconPath: '/GlyphWeb/favicon.png',
-            apkPath: '/GlyphWeb/Glyph.apk',
-            version: '2.4.42',
+            iconPath: './favicon.png',
+            apkPath: './Glyph.apk',
+            version: '2.5.0',
             audio: {
-                opening: '/GlyphWeb/opening.mp3',
-                breathe: '/GlyphWeb/breathe.mp3',
-                write: '/GlyphWeb/writing.mp3'
+                opening: './opening.mp3',
+                breathe: './breathe.mp3',
+                write: './writing.mp3'
             }
         };
         if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
@@ -75,7 +75,7 @@
     <nav class="nav" id="nav" aria-label="主导航">
         <div class="logo">
             <div class="logo-mark">
-                <img id="navIcon" src="/GlyphWeb/favicon.png" alt="" width="28" height="28" decoding="async">
+                <img id="navIcon" src="./favicon.png" alt="" width="28" height="28" decoding="async">
             </div>
             <span>Glyph</span>
         </div>
@@ -92,7 +92,7 @@
             <div class="hero-inner">
                 <div class="hero-text">
                     <div class="hero-eyebrow">
-                        <span>Super Mendel Engine</span>
+                        <span>PICF Engine</span>
                         <div class="eyebrow-line"></div>
                     </div>
 
@@ -108,7 +108,7 @@
 
                     <p class="hero-desc">
                         在可视化系谱图上构建家系结构，为每位成员记录<strong>疾病</strong>、<strong>致死基因</strong>与<strong>生存状态</strong>。
-                        推断引擎依据孟德尔遗传规律，自动推算成员基因型、评估后代遗传风险，并给出生育建议。
+                        <strong>PICF 引擎</strong>（Propagate · Inference · Conflict · Feedback）以<strong>孟德尔遗传规律</strong>为基础，沿家系关系双向扩散、自动推算基因型并给出生育建议。
                     </p>
 
                     <div class="hero-actions">
@@ -145,10 +145,10 @@
             <p class="quote-text" id="quoteText" aria-hidden="true">
                 <span class="q-line" data-text="每一位家系成员，都是遗传信息的载体。"></span>
                 <span class="q-line" data-text="以孟德尔规律为桥，" data-em="0"></span>
-                <span class="q-line" data-text="从系谱结构推演个体的基因型与后代的遗传风险。"></span>
+                <span class="q-line" data-text="从已知锚点出发，推演基因型、评估风险、提供数据分析支持。"></span>
             </p>
-            <p class="sr-only">每一位家系成员，都是遗传信息的载体。以孟德尔规律为桥，从系谱结构推演个体的基因型与后代的遗传风险。</p>
-            <p class="quote-attrib" id="quoteAttrib" aria-hidden="true">Super Mendel Engine</p>
+            <p class="sr-only">每一位家系成员，都是遗传信息的载体。以孟德尔规律为桥，从已知锚点出发，推演基因型、评估风险、提供数据分析支持。</p>
+            <p class="quote-attrib" id="quoteAttrib" aria-hidden="true">PICF Engine</p>
         </section>
 
         <section id="engine">
@@ -163,55 +163,55 @@
                         <span class="line-mask"><span>推断引擎的</span></span>
                         <span class="line-mask"><span>六个切面</span></span>
                     </h2>
-                    <p class="chapter-sub">从遗传模式解析到表型映射，推断引擎将每一个环节拆分为可独立验证的模块。</p>
+                    <p class="chapter-sub">从遗传模式解析到加密档案，PICF 引擎将每一个环节拆分为可独立验证的模块。</p>
                 </header>
                 <div class="engine-list">
                     <div class="engine-item">
                         <div class="engine-num">01</div>
                         <h3 class="engine-title"><span>六种遗传模式</span></h3>
                         <div>
-                            <p class="engine-desc">完整支持常染色体显性、常染色体隐性、X 染色体显性、X 染色体隐性、Y 连锁与线粒体遗传模式，正确处理半合子与复合杂合子判定。</p>
+                            <p class="engine-desc">完整支持常染色体显性、常染色体隐性、X 染色体显性、X 染色体隐性、Y 连锁与线粒体遗传模式，正确处理半合子与复合杂合子的判定。</p>
                             <span class="engine-tag">InheritMode</span>
                         </div>
                     </div>
                     <div class="engine-item">
                         <div class="engine-num">02</div>
-                        <h3 class="engine-title"><span>双向基因型传播</span></h3>
+                        <h3 class="engine-title"><span>PICF多环协作</span></h3>
                         <div>
-                            <p class="engine-desc">基于广度优先遍历，从已知锚点向父母、子女与同胞节点双向传播基因型信息，覆盖家系图中的全部关联个体。</p>
-                            <span class="engine-tag">Propagator</span>
+                            <p class="engine-desc">Propagate：以用户明确设置的个体为锚点，沿亲子、婚配、同胞关系广度优先扩散；Inference：在每一跳按孟德尔规律推算基因型分布；Conflict：系统推断与用户设置冲突时挂起等待裁定；Feedback：将用户的裁定结果作为新的锚点，继续驱动扩散直至收敛。</p>
+                            <span class="engine-tag">PICF Engine</span>
                         </div>
                     </div>
                     <div class="engine-item">
                         <div class="engine-num">03</div>
-                        <h3 class="engine-title"><span>外显率配置</span></h3>
+                        <h3 class="engine-title"><span>多外显率配置</span></h3>
                         <div>
-                            <p class="engine-desc">支持完全外显、性别依赖外显率与年龄依赖外显率三种模式。年龄依赖可自定义多个年龄段及对应概率。</p>
+                            <p class="engine-desc">支持完全外显、性别依赖外显率与年龄依赖外显率三种模式。年龄依赖可自定义多个年龄段及对应的男女概率区间。</p>
                             <span class="engine-tag">PenetranceConfig</span>
                         </div>
                     </div>
                     <div class="engine-item">
                         <div class="engine-num">04</div>
-                        <h3 class="engine-title"><span>冲突检测与锁定</span></h3>
+                        <h3 class="engine-title"><span>冲突挂起裁定</span></h3>
                         <div>
-                            <p class="engine-desc">推断引擎实时比对手动录入与系统推断结果，自动识别逻辑冲突，支持对关键节点加锁以保持数据一致性。</p>
-                            <span class="engine-tag">ConflictRule</span>
+                            <p class="engine-desc">系统推断与用户设置发生冲突时，扩散过程暂停并交由用户逐项裁定；检测到胚胎致死个体拥有后代时，提供删除整条后代链或仅断开亲子关系两种处置方式。</p>
+                            <span class="engine-tag">ConflictSuspension</span>
                         </div>
                     </div>
                     <div class="engine-item">
                         <div class="engine-num">05</div>
-                        <h3 class="engine-title"><span>多基因疾病</span></h3>
+                        <h3 class="engine-title"><span>多种基因配置</span></h3>
                         <div>
-                            <p class="engine-desc">支持一个疾病关联多个基因，并按遗传异质性独立通路合成患病概率，每个基因可单独配置遗传模式与外显率。</p>
-                            <span class="engine-tag">Polygenic</span>
+                            <p class="engine-desc">一个疾病可关联多个基因，按遗传异质性独立通路合成患病概率；同时支持为个体关联致死基因，评估致死概率、携带概率与胚胎致死情形。</p>
+                            <span class="engine-tag">DiseaseGene · LethalGene</span>
                         </div>
                     </div>
                     <div class="engine-item">
                         <div class="engine-num">06</div>
-                        <h3 class="engine-title"><span>表型状态映射</span></h3>
+                        <h3 class="engine-title"><span>作者归属加密</span></h3>
                         <div>
-                            <p class="engine-desc">将合子类型映射为患病、携带者、正常及胚胎死亡四级表型状态，在系谱图上以符号与颜色区分呈现。</p>
-                            <span class="engine-tag">PhenotypeEngine</span>
+                            <p class="engine-desc">导出的 LPG 系谱与全量备份均支持 AES-256-GCM 加密，密码经 PBKDF2 派生为 256 位密钥，密码错误或文件被篡改都将拒绝解密。文件内同时封装作者昵称、作者 ID 与所属单位，跨设备导入后作者归属仍指向原持有人，不会被当前设备覆盖。</p>
+                            <span class="engine-tag">AES-256-GCM · AuthorBinding</span>
                         </div>
                     </div>
                 </div>
@@ -237,33 +237,33 @@
                 <div class="feature-grid">
                     <div class="feature-cell">
                         <span class="feature-num">i.</span>
-                        <h3>双指缩放与焦点保持</h3>
+                        <h3>双指缩放焦点保持</h3>
                         <p>缩放手势的焦点始终锁定在双指中心，画布跟随手指自然流动，不会因缩放而丢失当前位置。</p>
                     </div>
                     <div class="feature-cell">
                         <span class="feature-num">ii.</span>
                         <h3>节点生命周期动画</h3>
-                        <p>新节点以弹性动画入场，删除时渐隐收缩，被选中的节点以金色边框提示，状态变化一目了然。</p>
+                        <p>新节点以弹性动画入场，删除时渐隐收缩；被选中的节点以金色边框提示，状态变化一目了然。</p>
                     </div>
                     <div class="feature-cell">
                         <span class="feature-num">iii.</span>
-                        <h3>智能布局排列</h3>
-                        <p>自动计算世代层级与节点位置，解决配偶对齐冲突，复杂家系也能保持清晰的层级结构。</p>
+                        <h3>智能布局排列算法</h3>
+                        <p>自动计算世代层级与节点位置，解决配偶对齐与家庭间冲突，复杂家系也能保持清晰的层级结构。</p>
                     </div>
                     <div class="feature-cell">
                         <span class="feature-num">iv.</span>
-                        <h3>手动布局与吸附</h3>
-                        <p>可切换到手动模式自由拖动节点，横向偏差较小时自动贴合为直线，兼顾灵活性与整齐度。</p>
+                        <h3>手动布局自动吸附</h3>
+                        <p>可切换到手动模式自由拖动节点，纵向自动吸附至世代层、横向偏差较小时贴合为直线，兼顾灵活性与整齐度。</p>
                     </div>
                     <div class="feature-cell">
                         <span class="feature-num">v.</span>
-                        <h3>完整的撤销重做</h3>
-                        <p>记录每一次增删改操作，支持无限级撤销与重做，误操作可安全回退。</p>
+                        <h3>单步撤销提高容错</h3>
+                        <p>记录每一次结构变更，提供单步撤销以回退最近一次操作，包括新增个体、删除个体与关系调整。</p>
                     </div>
                     <div class="feature-cell">
                         <span class="feature-num">vi.</span>
-                        <h3>多格式导出</h3>
-                        <p>支持 PDF（A4 自适应排版）、高清 PNG 图片与加密数据文件，方便存档、分享与跨设备迁移。</p>
+                        <h3>加密导出保护作者</h3>
+                        <p>PDF / 高清 PNG / LPG 数据文件三种导出；LPG 与全量备份可选用 AES-256-GCM 加密，作者信息随文件一同封装；导出作者卡片时亦可为二维码内容设置密钥，防止作者身份被随意识别或冒用。</p>
                     </div>
                 </div>
             </div>
@@ -278,37 +278,37 @@
                         <span class="chapter-label">Workflow</span>
                     </div>
                     <h2 class="chapter-title">
-                        <span class="line-mask"><span>从绘制到报告的</span></span>
-                        <span class="line-mask"><span>完整闭环</span></span>
+                        <span class="line-mask"><span>从绘制到加密归档</span></span>
+                        <span class="line-mask"><span>的完整闭环</span></span>
                     </h2>
-                    <p class="chapter-sub">修改系谱图会触发引擎重算，分析页面实时反映最新的推断结果。</p>
+                    <p class="chapter-sub">修改系谱图会触发 PICF 引擎重算，分析页面实时反映最新的推断结果。</p>
                 </header>
             </div>
             <div class="flow-track" id="flowTrack">
                 <div class="flow-card">
                     <div class="scene-num">01</div>
-                    <h3>绘制系谱</h3>
+                    <h3>快捷绘制系谱</h3>
                     <p>拖拽创建个体节点，点击建立婚配关系，自动识别父母-子女连线。支持姓名、性别、出生日期、生存状态等属性编辑。</p>
                 </div>
                 <div class="flow-card">
                     <div class="scene-num">02</div>
-                    <h3>标记表型</h3>
-                    <p>为个体标记疾病状态、合子类型或致死基因携带情况。系统立即启动推断引擎进行基因型推算。</p>
+                    <h3>标记多样表型</h3>
+                    <p>为个体标记疾病状态、合子类型或致死基因携带情况。系统立即启动 PICF 引擎，以该个体为锚点开始扩散推断。</p>
                 </div>
                 <div class="flow-card">
                     <div class="scene-num">03</div>
                     <h3>引擎自动推断</h3>
-                    <p>推断引擎在家系图中双向传播基因型信息，协调手动录入值与系统推断结果，冲突实时告警。</p>
+                    <p>PICF 引擎沿家系关系双向扩散，遇到系统推断与用户设置冲突时暂停并请求裁定，冲突处置完成后继续推导直至收敛。</p>
                 </div>
                 <div class="flow-card">
                     <div class="scene-num">04</div>
                     <h3>生成分析报告</h3>
-                    <p>分析页面逐项列出个体的患病概率、配偶后代风险、致死基因携带状态，并给出生育建议。</p>
+                    <p>分析页面逐项列出个体的患病概率、配偶后代风险、致死基因携带状态，并综合风险等级给出生育建议。</p>
                 </div>
                 <div class="flow-card">
                     <div class="scene-num">05</div>
-                    <h3>导出与备份</h3>
-                    <p>分析结果与系谱图可导出为 PDF 或高清图片，家系数据支持加密备份与跨设备导入。</p>
+                    <h3>加密导出备份</h3>
+                    <p>分析结果可导出为 PDF 或高清图片；系谱数据与全量备份支持 AES-256-GCM 加密，作者信息随文件封装；家系可在不同设备间加密迁移，也可开启退出自动备份。</p>
                 </div>
             </div>
             <div class="flow-hint"><span>Swipe to explore</span></div>
@@ -317,13 +317,13 @@
         <section class="finale" id="download">
             <div class="finale-mark" id="finaleMark">— The Beginning —</div>
             <div class="finale-icon" id="finaleIcon">
-                <img id="dlIcon" src="/GlyphWeb/favicon.png" alt="" width="72" height="72" decoding="async">
+                <img id="dlIcon" src="./favicon.png" alt="" width="72" height="72" decoding="async">
             </div>
             <h2 class="finale-title" id="finaleTitle">
                 开始使用<br>
                 <em>谱符 Glyph</em>
             </h2>
-            <p class="finale-sub" id="finaleSub">家系遗传推断 · 随身携带</p>
+            <p class="finale-sub" id="finaleSub">落笔成谱承血脉，凝神析因见遗传</p>
 
             <div class="version-badge" id="versionBadge">
                 <span class="v-dot"></span>
@@ -351,9 +351,9 @@
         <p class="footer-copy">Copyright © 2026 蓝七网络工作室<br>All Rights Reserved.</p>
     </footer>
 
-    <script src="/GlyphWeb/js/audio.js" defer></script>
-    <script src="/GlyphWeb/js/galaxy.js" defer></script>
-    <script src="/GlyphWeb/js/app.js" defer></script>
+    <script src="./js/audio.js" defer></script>
+    <script src="./js/galaxy.js" defer></script>
+    <script src="./js/app.js" defer></script>
 </body>
 
 </html>
